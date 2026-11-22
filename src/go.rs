@@ -3,7 +3,7 @@
 
 use heck::ToSnakeCase;
 
-/// golint's common initialisms, sorted for binary search.
+/// golint's common initialisms.
 const INITIALISMS: [&str; 38] = [
     "ACL", "API", "ASCII", "CPU", "CSS", "DNS", "EOF", "GUID", "HTML", "HTTP", "HTTPS", "ID", "IP",
     "JSON", "LHS", "QPS", "RAM", "RHS", "RPC", "SLA", "SMTP", "SQL", "SSH", "TCP", "TLS", "TTL",
@@ -24,24 +24,29 @@ pub fn pascal(text: &str) -> String {
 fn join(text: &str, lower_first: bool) -> String {
     // heck's snake case gives its word split, already lower cased.
     let snake = text.to_snake_case();
+    let mut words = snake.split('_');
     let mut out = String::with_capacity(snake.len());
-    for (i, word) in snake.split('_').filter(|w| !w.is_empty()).enumerate() {
-        if i == 0 && lower_first {
-            out.push_str(word);
-            continue;
-        }
-        let upper = word.to_uppercase();
-        if INITIALISMS.binary_search(&upper.as_str()).is_ok() {
-            out.push_str(&upper);
-        } else {
-            let mut chars = word.chars();
-            if let Some(first) = chars.next() {
-                out.extend(first.to_uppercase());
-                out.push_str(chars.as_str());
-            }
-        }
+    if lower_first {
+        out.extend(words.next());
+    }
+    for word in words {
+        push_capitalized(&mut out, word);
     }
     out
+}
+
+/// Appends `word` as an initialism if it is one, with its first letter in
+/// upper case otherwise.
+fn push_capitalized(out: &mut String, word: &str) {
+    if let Some(initialism) = INITIALISMS.iter().find(|i| i.eq_ignore_ascii_case(word)) {
+        out.push_str(initialism);
+        return;
+    }
+    let mut chars = word.chars();
+    if let Some(first) = chars.next() {
+        out.extend(first.to_uppercase());
+        out.push_str(chars.as_str());
+    }
 }
 
 #[cfg(test)]
@@ -49,11 +54,6 @@ mod tests {
     use super::*;
     use crate::{Case, convert};
     use rstest::rstest;
-
-    #[test]
-    fn initialisms_are_sorted_and_unique() {
-        assert!(INITIALISMS.windows(2).all(|pair| pair[0] < pair[1]));
-    }
 
     #[rstest]
     #[case::initialism_last("user id", "userID")]
@@ -76,6 +76,8 @@ mod tests {
     #[case::several("utf8 value https id ids", "UTF8ValueHTTPSIDIds")]
     #[case::single_word("json", "JSON")]
     #[case::accents("école id", "ÉcoleID")]
+    #[case::dotless_i_is_not_initialism("user ıd", "UserId")]
+    #[case::long_s_is_not_initialism("ſql query", "SqlQuery")]
     #[case::empty("", "")]
     fn go_pascal(#[case] input: &str, #[case] expected: &str) {
         assert_eq!(pascal(input), expected);
