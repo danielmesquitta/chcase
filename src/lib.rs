@@ -70,15 +70,13 @@ pub fn convert_lines(
     case: Case,
 ) -> io::Result<()> {
     let mut buf = Vec::new();
-    loop {
-        buf.clear();
-        if input.read_until(b'\n', &mut buf)? == 0 {
-            return output.flush();
-        }
+    while input.read_until(b'\n', &mut buf)? != 0 {
         let line = buf.strip_suffix(b"\n").unwrap_or(&buf);
         let line = line.strip_suffix(b"\r").unwrap_or(line);
         writeln!(output, "{}", convert(&String::from_utf8_lossy(line), case))?;
+        buf.clear();
     }
+    output.flush()
 }
 
 /// Splits on anything that is not a letter or digit (the same rule heck uses)
