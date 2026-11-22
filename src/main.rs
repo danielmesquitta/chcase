@@ -99,24 +99,9 @@ fn main() -> ExitCode {
     let result = if !input.text.is_empty() {
         writeln!(io::stdout(), "{}", convert(&input.text.join(" "), case))
     } else if io::stdin().is_terminal() {
-        // Report against the subcommand so the usage line shows its arguments.
-        let name = matches.subcommand_name().expect("a subcommand is required");
-        cmd.find_subcommand_mut(name)
-            .expect("parsed subcommand exists")
-            .error(
-                ErrorKind::MissingRequiredArgument,
-                "no input: pass TEXT as arguments or pipe it via stdin",
-            )
-            .exit()
+        missing_input(&mut cmd, &matches)
     } else {
-        let stdout = io::stdout().lock();
-        if stdout.is_terminal() {
-            // Std's line buffering shows each line as soon as it is converted.
-            convert_lines(io::stdin().lock(), stdout, case)
-        } else {
-            // A write per line dominates the run time on large inputs.
-            convert_lines(io::stdin().lock(), io::BufWriter::new(stdout), case)
-        }
+        convert_stdin(case)
     };
 
     match result {
@@ -128,4 +113,29 @@ fn main() -> ExitCode {
             ExitCode::FAILURE
         }
     }
+}
+
+/// Converts stdin line by line onto stdout.
+fn convert_stdin(case: Case) -> io::Result<()> {
+    let stdout = io::stdout().lock();
+    if stdout.is_terminal() {
+        // Std's line buffering shows each line as soon as it is converted.
+        convert_lines(io::stdin().lock(), stdout, case)
+    } else {
+        // A write per line dominates the run time on large inputs.
+        convert_lines(io::stdin().lock(), io::BufWriter::new(stdout), case)
+    }
+}
+
+/// Exits with a usage error for a conversion that was given no text.
+fn missing_input(cmd: &mut clap::Command, matches: &clap::ArgMatches) -> ! {
+    // Report against the subcommand so the usage line shows its arguments.
+    let name = matches.subcommand_name().expect("a subcommand is required");
+    cmd.find_subcommand_mut(name)
+        .expect("parsed subcommand exists")
+        .error(
+            ErrorKind::MissingRequiredArgument,
+            "no input: pass TEXT as arguments or pipe it via stdin",
+        )
+        .exit()
 }
