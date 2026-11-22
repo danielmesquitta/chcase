@@ -1,4 +1,4 @@
-//! Go-style camelCase and PascalCase, which keep Go's common initialisms in
+//! Go-style camelCase and `PascalCase`, which keep Go's common initialisms in
 //! upper case (`userID`, `HTTPServer`).
 
 use heck::ToSnakeCase;
@@ -16,7 +16,7 @@ pub fn camel(text: &str) -> String {
     join(text, true)
 }
 
-/// PascalCase with initialisms (`JSONData`).
+/// `PascalCase` with initialisms (`JSONData`).
 pub fn pascal(text: &str) -> String {
     join(text, false)
 }

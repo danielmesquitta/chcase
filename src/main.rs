@@ -13,7 +13,7 @@ Examples:
   echo \"hello world\" | chcase pascal
   chcase kebab < names.txt";
 
-/// Change text between camelCase, snake_case, kebab-case and other cases.
+/// Change text between camelCase, `snake_case`, kebab-case and other cases.
 #[derive(Parser)]
 // A fixed bin_name keeps usage lines free of `.exe` on Windows.
 #[command(
@@ -29,6 +29,10 @@ struct Cli {
 }
 
 #[derive(Subcommand)]
+#[expect(
+    clippy::doc_markdown,
+    reason = "these doc comments are the --help text, where backticks would print literally"
+)]
 enum Command {
     /// Convert to camelCase (hello world -> helloWorld)
     Camel(Input),

@@ -43,6 +43,7 @@ pub enum Case {
 }
 
 /// Converts `text` to `case`.
+#[must_use]
 pub fn convert(text: &str, case: Case) -> String {
     match case {
         Case::Camel => text.to_lower_camel_case(),
@@ -64,6 +65,10 @@ pub fn convert(text: &str, case: Case) -> String {
 ///
 /// Blank lines are kept, `\r\n` endings are accepted, and invalid UTF-8 is
 /// replaced with U+FFFD (a word boundary) instead of failing.
+///
+/// # Errors
+///
+/// Returns any error from reading `input` or writing `output`.
 pub fn convert_lines(
     mut input: impl BufRead,
     mut output: impl Write,
