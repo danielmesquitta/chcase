@@ -15,7 +15,14 @@ Examples:
 
 /// Change text between camelCase, snake_case, kebab-case and other cases.
 #[derive(Parser)]
-#[command(version, about, after_help = EXAMPLES, arg_required_else_help = true)]
+// A fixed bin_name keeps usage lines free of `.exe` on Windows.
+#[command(
+    bin_name = "chcase",
+    version,
+    about,
+    after_help = EXAMPLES,
+    arg_required_else_help = true
+)]
 struct Cli {
     #[command(subcommand)]
     command: Command,
