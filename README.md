@@ -15,8 +15,10 @@ HTTPServer
 ## Installation
 
 ```bash
-cargo install chcase
+cargo install --git https://github.com/danielmesquitta/chcase --tag v0.1.1
 ```
+
+Drop `--tag` to install the latest `main` instead of a release.
 
 Or build from source:
 
