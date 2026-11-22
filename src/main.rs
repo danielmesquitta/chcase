@@ -109,7 +109,14 @@ fn main() -> ExitCode {
             )
             .exit()
     } else {
-        convert_lines(io::stdin().lock(), io::stdout().lock(), case)
+        let stdout = io::stdout().lock();
+        if stdout.is_terminal() {
+            // Std's line buffering shows each line as soon as it is converted.
+            convert_lines(io::stdin().lock(), stdout, case)
+        } else {
+            // A write per line dominates the run time on large inputs.
+            convert_lines(io::stdin().lock(), io::BufWriter::new(stdout), case)
+        }
     };
 
     match result {
