@@ -14,7 +14,10 @@ use heck::{
 };
 
 /// A target case.
+///
+/// New cases may be added in minor releases, so matches need a wildcard arm.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum Case {
     /// `helloWorld`
     Camel,

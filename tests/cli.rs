@@ -1,3 +1,5 @@
+//! End-to-end tests that run the `chcase` binary.
+
 use assert_cmd::Command;
 use predicates::prelude::*;
 use rstest::rstest;

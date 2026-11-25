@@ -1,3 +1,5 @@
+//! The `chcase` command-line tool: converts its arguments or stdin to a chosen case.
+
 use std::io::{self, IsTerminal, Write};
 use std::process::ExitCode;
 
@@ -113,7 +115,13 @@ fn main() -> ExitCode {
         // The reader went away (`chcase snake < big.txt | head`): not an error.
         Err(err) if err.kind() == io::ErrorKind::BrokenPipe => ExitCode::SUCCESS,
         Err(err) => {
-            eprintln!("error: {err}");
+            #[expect(
+                clippy::print_stderr,
+                reason = "reporting errors on stderr is this CLI's own output"
+            )]
+            {
+                eprintln!("error: {err}");
+            }
             ExitCode::FAILURE
         }
     }

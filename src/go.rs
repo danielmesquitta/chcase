@@ -12,21 +12,30 @@ const INITIALISMS: [&str; 38] = [
 
 /// camelCase with initialisms; the first word stays lower case even when it
 /// is an initialism (`jsonData`), as Go expects for unexported names.
-pub fn camel(text: &str) -> String {
-    join(text, true)
+pub(crate) fn camel(text: &str) -> String {
+    join(text, FirstWord::Lower)
 }
 
 /// `PascalCase` with initialisms (`JSONData`).
-pub fn pascal(text: &str) -> String {
-    join(text, false)
+pub(crate) fn pascal(text: &str) -> String {
+    join(text, FirstWord::Capitalized)
 }
 
-fn join(text: &str, lower_first: bool) -> String {
+/// How [`join`] writes the first word.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum FirstWord {
+    /// Lower case, even when it is an initialism (`jsonData`).
+    Lower,
+    /// Capitalized like every other word (`JSONData`).
+    Capitalized,
+}
+
+fn join(text: &str, first_word: FirstWord) -> String {
     // heck's snake case gives its word split, already lower cased.
     let snake = text.to_snake_case();
     let mut words = snake.split('_');
     let mut out = String::with_capacity(snake.len());
-    if lower_first {
+    if first_word == FirstWord::Lower {
         out.extend(words.next());
     }
     for word in words {

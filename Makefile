@@ -24,7 +24,7 @@ fmt-check: ## Check formatting without changing files
 	cargo fmt -- --check
 
 lint: ## Run clippy, treating warnings as errors
-	cargo clippy --all-targets -- -D warnings
+	cargo clippy --all-targets --all-features -- -D warnings
 
 fix: ## Auto-apply clippy and compiler suggestions
 	cargo clippy --fix --allow-dirty --allow-staged

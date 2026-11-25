@@ -3,3 +3,4 @@
 
 # Agent skills
 .agents/skills/*/evals/
+.agents/skills/rust-port/
