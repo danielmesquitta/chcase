@@ -1,4 +1,4 @@
-.PHONY: all install build release run test fmt fmt-check lint fix watch-fix check clean help
+.PHONY: all install build release run test fmt fmt-check lint fix watch-fix check clean update help
 
 all: check
 
@@ -36,6 +36,9 @@ check: fmt-check lint test ## Everything CI would run
 
 clean: ## Remove build artifacts
 	cargo clean
+
+update: ## Update agent skills
+	npx skills update -y
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \

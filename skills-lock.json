@@ -8,13 +8,6 @@
       "skillPath": "skills/rust-best-practices/SKILL.md",
       "computedHash": "313bea7637531b7f6fe60798bed2108e49594914d4db44e303b7d2312868b3d1"
     },
-    "rust-port": {
-      "source": "morganlinton/BeautifulRust",
-      "commit": "b9718436d77ee7bcf17cdcb6aa27628feb95d97a",
-      "sourceType": "github",
-      "skillPath": "skills/rust-port/SKILL.md",
-      "computedHash": "b125be23ffeac1c4b67d018282f60acee159a228a83d6aebfc4848dd3d3c2efa"
-    },
     "rust-review": {
       "source": "morganlinton/BeautifulRust",
       "commit": "b9718436d77ee7bcf17cdcb6aa27628feb95d97a",
